@@ -4,7 +4,6 @@ import React, { useRef, useState, useEffect } from "react";
 
 export default function Home(): JSX.Element {
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [photo, setPhoto] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState<boolean>(false);
 
@@ -43,19 +42,6 @@ export default function Home(): JSX.Element {
     }
   }, [isMobile]);
 
-  const takePhoto = (): void => {
-    const video = videoRef.current;
-    const canvas = canvasRef.current;
-    if (video && canvas) {
-      const ctx = canvas.getContext("2d");
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const img = canvas.toDataURL("image/png");
-      setPhoto(img);
-    }
-  };
-
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ): void => {
@@ -75,38 +61,24 @@ export default function Home(): JSX.Element {
   return (
     <div className="p-4 max-w-md mx-auto">
       {isMobile ? (
-        <input
-          type="file"
-          accept="image/*"
-          capture="environment"
-          onChange={handleFileChange}
-          className="mb-4"
-        />
-      ) : (
         <>
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            className="rounded shadow w-full"
+          <input
+            type="file"
+            accept="image/*"
+            capture="environment"
+            onChange={handleFileChange}
+            className="mb-4"
           />
-          <button
-            onClick={takePhoto}
-            className="mt-4 bg-blue-600 text-white px-4 py-2 rounded"
-          >
-            Take Photo
-          </button>
-        </>
-      )}
 
-      <canvas ref={canvasRef} style={{ display: "none" }} />
-      <div className="mx-4">{photo}</div>
-      {photo && (
-        <div className="mt-4">
-          <p>Captured Photo:</p>
-          <img src={photo} alt="Captured" className="rounded border mt-2" />
-        </div>
-      )}
+          <div className="mx-4">{photo}</div>
+          {photo && (
+            <div className="mt-4">
+              <p>Captured Photo:</p>
+              <img src={photo} alt="Captured" className="rounded border mt-2" />
+            </div>
+          )}
+        </>
+      ) : null}
     </div>
   );
 }
